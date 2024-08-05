@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "533231650516",
+    "project_id": "febar-project",
+    "storage_bucket": "febar-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:533231650516:android:1f79a25283f4bb37461d41",
+        "android_client_info": {
+          "package_name": "com.febartravel.febarproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAuBm_O54Op7d638blN7BYUpPCPhN2LSeI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
