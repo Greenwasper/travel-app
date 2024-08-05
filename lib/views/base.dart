@@ -44,7 +44,7 @@ class _BaseState extends State<Base> {
   }
 
   void _onItemTapped(int index) {
-    if(index != 4){
+    if(index != 3){
       setState(() {
         _selectedIndex = index;
       });
