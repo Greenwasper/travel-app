@@ -23,6 +23,7 @@ class Register extends StatefulWidget {
 
 class _RegisterState extends State<Register> {
   bool isLoading = false;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   final TextEditingController _firstName = TextEditingController();
   final TextEditingController _lastName = TextEditingController();
@@ -33,58 +34,36 @@ class _RegisterState extends State<Register> {
 
   bool passwordObscured = true;
 
-  // Future<void> register() async {
-  //   setState(() {
-  //     isLoading = true;
-  //   });
-  //
-  //   Uri url = Uri.parse('https://cscdc.online/apis/travel_app_register.php');
-  //
-  //   String res = '';
-  //
-  //   Map<String, String> body = {
-  //     'first_name': _firstName.text,
-  //     'last_name': _lastName.text,
-  //     'email': _email.text,
-  //     'phone_number': _phoneNumber.text,
-  //     'password': _password.text
-  //   };
-  //
-  //   try{
-  //     http.Response response = await http.post(url, body: body).timeout(const Duration(seconds: 10));
-  //     res = json.decode(response.body)[0];
-  //   } catch (e) {
-  //     print(e);
-  //   }
-  //
-  //   if (res == 'success') {
-  //     if(mounted){
-  //       toast("Saved");
-  //       Navigator.pop(context);
-  //     }
-  //   } else {
-  //     toast("An error occurred");
-  //   }
-  //
-  //   setState(() {
-  //     isLoading = false;
-  //   });
-  //
-  // }
-
   void register () async {
     bool isError = false;
-    UserCredential? userCredentials;
+    // UserCredential? userCredentials;
 
     setState(() {
       isLoading = true;
     });
 
     try{
-      userCredentials = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      UserCredential userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: _email.text.trim(),
         password: _password.text.trim()
       );
+
+      _firestore.collection('users').doc(userCredential.user!.uid).set({
+        'uid': userCredential.user!.uid,
+        'username': '',
+        'firstname': _firstName.text,
+        'lastnamename': _lastName.text,
+        'country': '',
+        'phonenumber': _phoneNumber.text,
+        'activeproposals': '',
+        'archivedinterviews': '',
+        'archivedproposals': '',
+        'availablebalance': '',
+        'offers': '',
+        'pendingbalance': '',
+        'submittedproposals': '',
+        'email': userCredential.user!.email
+      });
 
       isError = false;
 
@@ -109,13 +88,13 @@ class _RegisterState extends State<Register> {
     }
 
     if(!isError){
-      FirebaseFirestore.instance.collection('users').doc(userCredentials!.user!.uid).set({
-        'uid': userCredentials.user!.uid,
-        'email': userCredentials.user!.email,
-        'first_name': _firstName.text,
-        'last_name': _lastName.text,
-        'user_name': _username.text
-      });
+      // FirebaseFirestore.instance.collection('users').doc(userCredentials!.user!.uid).set({
+      //   'uid': userCredentials.user!.uid,
+      //   'email': userCredentials.user!.email,
+      //   'first_name': _firstName.text,
+      //   'last_name': _lastName.text,
+      //   'user_name': _username.text
+      // });
     }
   }
 

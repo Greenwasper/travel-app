@@ -38,7 +38,7 @@ class Category extends StatelessWidget {
             ),
             child: Center(
               child: Text(
-                selected ? "$title (Selected)" : title,
+                title,
                 style: const TextStyle(
                   color: Colors.white,
                   fontSize: 18,

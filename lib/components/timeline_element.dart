@@ -12,18 +12,21 @@ class TimelineElement extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 80,
-      height: 80,
+      width: 90,
+      height: 90,
       decoration: BoxDecoration(
-        color: selected ? Colors.blue.shade500 : Colors.blue.shade100,
+        color: selected ? Colors.blue.shade100 : Colors.transparent,
+        // color: selected ? Colors.blue.shade500 : Colors.blue.shade100,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(icon, size: 30, color: selected ? Colors.white : Colors.black),
+          Icon(icon, size: 30, color: selected ? Colors.black : Colors.black),
+          // Icon(icon, size: 30, color: selected ? Colors.white : Colors.black),
           const SizedBox(height: 10),
-          CustomText(text: label, color: selected ? Colors.white : Colors.black),
+          CustomText(text: label, color: selected ? Colors.black : Colors.black),
+          // CustomText(text: label, color: selected ? Colors.white : Colors.black),
         ],
       ),
     );

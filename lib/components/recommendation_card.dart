@@ -1,22 +1,27 @@
 import 'package:flutter/material.dart';
 
 class CustomCard extends StatelessWidget {
+
+  final bool selected;
   final String imageUrl;
   final String destination;
   final String estimatedAmount;
+  final void Function() onSelectPressed;
 
   const CustomCard({
     super.key,
     required this.imageUrl,
     required this.destination,
     required this.estimatedAmount,
+    required this.selected,
+    required this.onSelectPressed,
   });
 
   @override
   Widget build(BuildContext context) {
     return Card(
       elevation: 10,
-      color: Colors.blue[70],
+      color: selected ? Colors.blue[100] : Colors.blue[70],
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.all(Radius.circular(20)),
       ),
@@ -76,24 +81,29 @@ class CustomCard extends StatelessWidget {
                     ],
                   ),
                 ),
-                Container(
-                  height: 60,
-                  width: 60,
-                  margin: const EdgeInsets.only(left: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: Colors.blue,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      "ADD TO CALENDAR",
-                      style: TextStyle(
-                        fontSize: 8,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
+                GestureDetector(
+                  onTap: () {
+                    onSelectPressed();
+                  },
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    margin: const EdgeInsets.only(left: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.blue,
                     ),
+                    child: !selected ? const Center(
+                      child: Text(
+                        "ADD TO CALENDAR",
+                        style: TextStyle(
+                          fontSize: 8,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ) : Icon(Icons.check, color: Colors.white,),
                   ),
                 ),
               ],

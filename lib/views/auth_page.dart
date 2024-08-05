@@ -2,9 +2,8 @@ import 'package:febarproject/authentications/login_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-
 import 'base.dart';
-import 'login.dart';
+import 'package:febarproject/views/login.dart';
 
 class AuthPage extends StatelessWidget {
   
@@ -18,8 +17,8 @@ class AuthPage extends StatelessWidget {
         if(snapshot.hasData){
           return Base();
         } else {
-          // return Login(locations: locations, regions: regions);
-          return LoginScreen();
+          return Login();
+          // return LoginScreen();
         }
       },
     );

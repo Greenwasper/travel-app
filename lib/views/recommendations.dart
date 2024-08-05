@@ -1,10 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:febarproject/components/custom_text.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:febarproject/components/recommendation_card.dart';
 import 'package:lottie/lottie.dart';
+import 'package:provider/provider.dart';
 
 import '../components/timeline_element.dart';
+import '../components/trip.dart';
+import '../components/trip_model.dart';
 
 class Recommendation extends StatefulWidget {
 
@@ -24,6 +28,7 @@ class _RecommendationState extends State<Recommendation> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Set<Map> recommendationsSet = {};
   List<Map> recommendations = [];
+  Set<Map> selectedLocations = {};
 
   void getLocations () async {
     String selectedRegion = widget.region;
@@ -58,9 +63,9 @@ class _RecommendationState extends State<Recommendation> {
       if (location['region'] == selectedRegion) { // Region Check
         for (var selectedCategory in selectedCategories.toList()) {
           if (location[selectedCategory.toLowerCase()] == 'Y') { // Category Check
-            if (location['price']['min'] >= minBudget && maxBudget >= location['price']['max']) { // Price Check
+            // if (double.parse(location['price']['min']) >= minBudget && maxBudget >= double.parse(location['price']['max'])) { // Price Check
               recommendationsSet.add(location);
-            }
+            // }
           }
         }
       }
@@ -105,21 +110,40 @@ class _RecommendationState extends State<Recommendation> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                TimelineElement(
+                const TimelineElement(
                   icon: Icons.edit,
                   label: 'Basic Input',
                 ),
-                TimelineElement(
+                const TimelineElement(
                   icon: Icons.category,
                   label: 'Categories',
                 ),
-                TimelineElement(
-                  icon: Icons.done,
-                  label: 'Done',
-                  selected: true,
+                Consumer<TripModel>(
+                  builder: (context, value, child){
+                    return GestureDetector(
+                      onTap: () {
+                        if(selectedLocations.isNotEmpty) {
+                          for(var location in selectedLocations.toList()){
+                            value.addTrip(Trip(
+                                name: 'Trip to ${location['location']}',
+                                destination: location
+                            ));
+                          }
+
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        }
+                      },
+                      child: TimelineElement(
+                        icon: Icons.done,
+                        label: 'Done',
+                        selected: true,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),
@@ -131,10 +155,23 @@ class _RecommendationState extends State<Recommendation> {
               children: gottenRecommendations ? List.generate(recommendations.length, (index) {
                 Map location = recommendations[index];
 
+                // print(location['price']['max']);
+
                 return CustomCard(
                   imageUrl: 'https://cscdc.online/travel-images/${location['location'].replaceAll(' ', '-').toLowerCase()}.jpg',
                   destination: location['location'],
-                  estimatedAmount: location['price']['max'].toString(),
+                  estimatedAmount: "50",
+                  // estimatedAmount: "${location['price']['max']}",
+                  selected: selectedLocations.contains(location),
+                  onSelectPressed: () {
+                    setState(() {
+                      if(selectedLocations.contains(location)){
+                        selectedLocations.remove(location);
+                      } else {
+                        selectedLocations.add(location);
+                      }
+                    });
+                  },
                 );
               }) : [
                 Column(
