@@ -53,3 +53,21 @@ String formatDate(DateTime date) {
 
   return formattedDate;
 }
+
+String formatDateFull(DateTime dateTime) {
+  // Create a DateFormat for the date part
+  final dateFormat = DateFormat("d MMMM yyyy");
+  final timeFormat = DateFormat("h:mm a");
+
+  // Format the date and time
+  final date = dateFormat.format(dateTime);
+  final time = timeFormat.format(dateTime);
+
+  // Get the day of the month to determine the ordinal suffix
+  final day = dateTime.day;
+  final suffix = getDayWithSuffix(day);
+
+  // Combine date and time with the suffix
+  // return "$suffix ${date.replaceFirst('$day', '')}, $time";
+  return time;
+}

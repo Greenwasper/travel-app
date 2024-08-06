@@ -55,6 +55,7 @@ dependencies:
   provider:
   uuid: ^4.4.2
   intl: ^0.19.0
+  flutter_slidable: ^3.1.1
 
 
 dev_dependencies:

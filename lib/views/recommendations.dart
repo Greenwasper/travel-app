@@ -4,12 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:febarproject/components/recommendation_card.dart';
 import 'package:lottie/lottie.dart';
-import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 
 import '../components/timeline_element.dart';
 import '../components/trip.dart';
-import '../components/trip_model.dart';
 import 'base.dart';
 
 class Recommendation extends StatefulWidget {
@@ -32,6 +30,7 @@ class _RecommendationState extends State<Recommendation> {
   Set<Map> recommendationsSet = {};
   List<Map> recommendations = [];
   Set<Map> selectedLocations = {};
+  double totalPrice = 0;
 
   void getLocations () async {
     String selectedRegion = widget.region;
@@ -60,15 +59,15 @@ class _RecommendationState extends State<Recommendation> {
       }
     }
 
-    print(allLocations[0]);
+    // print(allLocations[0]);
 
     for(Map location in allLocations) {
       if (location['region'] == selectedRegion) { // Region Check
         for (var selectedCategory in selectedCategories.toList()) {
           if (location[selectedCategory.toLowerCase()] == 'Y') { // Category Check
-            // if (double.parse(location['price']['min']) >= minBudget && maxBudget >= double.parse(location['price']['max'])) { // Price Check
+            if (location['price']['min'].toDouble() >= minBudget && maxBudget >= location['price']['max'].toDouble()) { // Price Check
               recommendationsSet.add(location);
-            // }
+            }
           }
         }
       }
@@ -158,16 +157,6 @@ class _RecommendationState extends State<Recommendation> {
 
                       print("Added to db");
 
-                      // for(var location in selectedLocations.toList()){
-                      //   context.read<TripModel>().addTrip(Trip(
-                      //       name: 'Trip to ${location['location']}',
-                      //       destination: location
-                      //   ));
-                      // }
-
-                      // Navigator.pop(context);
-                      // Navigator.pop(context);
-
                       if(mounted){
                         Navigator.pushAndRemoveUntil(
                           context,
@@ -185,8 +174,12 @@ class _RecommendationState extends State<Recommendation> {
         ),
               ],
             ),
-            const SizedBox(height: 30),
-            const Center(child: CustomText(text: "Recommendations", fontSize: 20,)),
+            const SizedBox(height: 10),
+            const Center(child: CustomText(text: "Recommendations", fontSize: 25)),
+            const SizedBox(height: 1),
+            Center(child: CustomText(text: "Your Budget: ${widget.rangeValues.end}", fontSize: 17)),
+            const SizedBox(height: 1),
+            Center(child: CustomText(text: "Selected Destinations Price: $totalPrice", fontSize: 17)),
             const SizedBox(height: 20),
             Column(
               mainAxisAlignment: gottenRecommendations ? MainAxisAlignment.start : MainAxisAlignment.center,
@@ -198,16 +191,51 @@ class _RecommendationState extends State<Recommendation> {
                 return CustomCard(
                   imageUrl: 'https://cscdc.online/travel-images/${location['location'].replaceAll(' ', '-').toLowerCase()}.jpg',
                   destination: location['location'],
-                  estimatedAmount: "50",
-                  // estimatedAmount: "${location['price']['max']}",
+                  // estimatedAmount: "50",
+                  estimatedAmount: "${location['price']['max']}",
                   selected: selectedLocations.contains(location),
-                  onSelectPressed: () {
+                  onSelectPressed: () async {
+                    totalPrice = 0;
+
+                    if(selectedLocations.contains(location)){
+                      selectedLocations.remove(location);
+                    } else {
+                      selectedLocations.add(location);
+                    }
+                    totalPrice = selectedLocations.fold(0.0, (acc, item) {
+                      return acc + (item['price']['max']);
+                    });
+
+                    if(totalPrice > widget.rangeValues.end){
+                      await showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Be Careful!', style: TextStyle(color: Colors.red.shade300)),
+                            content: const Text('The selected trips have passed your expected budget! Make sure you cut your coat according to your size!'),
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop();  // Close the dialog
+                                },
+                                child: const Text('OK'),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+
+                      totalPrice = 0;
+
+                      selectedLocations.remove(location);
+
+                      totalPrice = selectedLocations.fold(0.0, (acc, item) {
+                        return acc + (item['price']['max']);
+                      });
+                    }
+
                     setState(() {
-                      if(selectedLocations.contains(location)){
-                        selectedLocations.remove(location);
-                      } else {
-                        selectedLocations.add(location);
-                      }
+
                     });
                   },
                 );

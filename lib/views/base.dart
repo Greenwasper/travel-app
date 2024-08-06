@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:febarproject/components/custom_text.dart';
 import 'package:febarproject/pages/wheretogo.dart';
+import 'package:febarproject/views/contact_us.dart';
 import 'package:febarproject/views/settings.dart';
 import 'package:febarproject/views/trips.dart';
 import 'package:flutter/material.dart';
@@ -29,7 +30,6 @@ class _BaseState extends State<Base> {
   @override
   void initState() {
     _selectedIndex = widget.initialIndex;
-    // _bottomNavigationKey.currentState!.setPage(_selectedIndex);
     _pages = <Widget>[
       const Home(),
       const Chat(),
@@ -123,8 +123,7 @@ class _BaseState extends State<Base> {
               leading: Icon(Icons.contacts),
               title: Text('Contact Us'),
               onTap: () {
-                // Handle the Contact Us tap here
-                Navigator.pop(context); // Close the drawer
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactUs()));
               },
             ),
           ],
@@ -147,6 +146,7 @@ class _BaseState extends State<Base> {
           // ),
           CurvedNavigationBar(
             key: _bottomNavigationKey,
+            index: _selectedIndex,
             height: 60,
             backgroundColor: Colors.transparent,
             color: Colors.blue,
@@ -158,7 +158,6 @@ class _BaseState extends State<Base> {
               Icon(Icons.chat, color: _selectedIndex == 1 ? Colors.blue : Colors.white),
               Icon(Icons.map, color: _selectedIndex == 2 ? Colors.blue : Colors.white),
               Icon(Icons.question_mark, color: _selectedIndex == 3 ? Colors.blue : Colors.white),
-
             ],
           ),
         ],

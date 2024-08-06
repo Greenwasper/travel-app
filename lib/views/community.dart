@@ -6,51 +6,57 @@ import '../components/chat_bubble.dart';
 import '../components/colors.dart';
 import '../components/message.dart';
 
-
-class ChatRoom extends StatefulWidget {
-
-  final String receiverId;
-  final String receiverName;
-
-  const ChatRoom({super.key, required this.receiverId, required this.receiverName});
+class Community extends StatefulWidget {
+  const Community({super.key});
 
   @override
-  State<ChatRoom> createState() => _ChatRoomState();
+  State<Community> createState() => _CommunityState();
 }
 
-class _ChatRoomState extends State<ChatRoom> {
-
-  User? user = FirebaseAuth.instance.currentUser;
-  final TextEditingController _messageController = TextEditingController();
+class _CommunityState extends State<Community> {
+  User user = FirebaseAuth.instance.currentUser!;
 
   final ScrollController _scrollController = ScrollController();
+  final TextEditingController _messageController = TextEditingController();
+  Map userInfo = {};
+  String name = '';
+
+  void getUserInfo () async {
+    DocumentSnapshot userInfoSnapshot = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+    userInfo = userInfoSnapshot.data() as Map;
+
+    name = "${userInfo['firstname']} ${userInfo['lastnamename']}";
+
+    setState(() {
+
+    });
+  }
+
+  Stream<QuerySnapshot> getMessages () {
+    return FirebaseFirestore.instance.collection('community').orderBy('timeStamp', descending: false).snapshots();
+  }
 
   Future<void> sendMessage () async {
     Timestamp timestamp = Timestamp.now();
 
     Message newMessage = Message(
-      senderId: user!.uid,
-      senderEmail: user!.email!,
-      receiverId: widget.receiverId,
-      message: _messageController.text,
-      timeStamp: timestamp
+        senderId: user.uid,
+        senderEmail: user.email!,
+        senderName: name,
+        receiverId: '',
+        message: _messageController.text,
+        timeStamp: timestamp
     );
 
-    List<String> ids = [user!.uid, widget.receiverId];
-    ids.sort();
-    String chatRoomId = ids.join('_');
-
     _messageController.clear();
-    await FirebaseFirestore.instance.collection('chatRooms').doc(chatRoomId).collection('messages').add(newMessage.toMap());
+    await FirebaseFirestore.instance.collection('community').add(newMessage.toMap());
     // _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
   }
 
-  Stream<QuerySnapshot> getMessages () {
-    List<String> ids = [user!.uid, widget.receiverId];
-    ids.sort();
-    String chatRoomId = ids.join('_');
-
-    return FirebaseFirestore.instance.collection('chatRooms').doc(chatRoomId).collection('messages').orderBy('timeStamp', descending: false).snapshots();
+  @override
+  void initState() {
+    super.initState();
+    getUserInfo();
   }
 
   @override
@@ -63,35 +69,35 @@ class _ChatRoomState extends State<ChatRoom> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey.shade200,
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: AppBar(
           flexibleSpace: Container(
             decoration: BoxDecoration(gradient: LinearGradient(colors: [primaryColor, secondaryColor])),
           ),
-          title: Row(
-            children: [
-              const CircleAvatar(
-                child: Icon(Icons.person),
-              ),
-              const SizedBox(width: 15),
-              Text(widget.receiverName, style: const TextStyle(color: Colors.white))
-            ],
-          ),
+          title: const Text('Community Chat', style: const TextStyle(color: Colors.white)),
           iconTheme: const IconThemeData(
             color: Colors.white, // Change the drawer icon color to white
           ),
           elevation: 0,
         ),
       ),
-      body: Container(
+      body: userInfo.isEmpty ?
+      Container(
+        height: double.infinity,
+        width: double.infinity,
+        color: Colors.transparent,
+        child: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      ) :
+      Container(
         decoration: const BoxDecoration(
-          image: DecorationImage(
-            opacity: 0.2,
-            image: AssetImage('assets/chat_wallpaper2.webp'),
-            fit: BoxFit.cover
-          )
+            image: DecorationImage(
+                opacity: 0.2,
+                image: AssetImage('assets/chat_wallpaper2.webp'),
+                fit: BoxFit.cover
+            )
         ),
         child: Column(
           children: [
@@ -126,12 +132,14 @@ class _ChatRoomState extends State<ChatRoom> {
                         Map data = doc.data() as Map;
 
                         return Container(
-                          alignment: data['senderId'] == user!.uid ? Alignment.centerRight : Alignment.centerLeft,
+                          alignment: data['senderId'] == user.uid ? Alignment.centerRight : Alignment.centerLeft,
                           child: Column(
                             children: [
                               ChatBubble(
+                                inCommunity: true,
+                                communityName: data['name'],
                                 message: data['message'],
-                                isSender: data['senderId'] == user!.uid,
+                                isSender: data['senderId'] == user.uid,
                                 timeStamp: data['timeStamp']
                               ),
                             ],
@@ -159,19 +167,19 @@ class _ChatRoomState extends State<ChatRoom> {
                         hintText: "Enter message...",
                         border: InputBorder.none,
                         enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(40),
-                          borderSide: BorderSide.none
+                            borderRadius: BorderRadius.circular(40),
+                            borderSide: BorderSide.none
                         ),
                         focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(40),
-                          borderSide: BorderSide.none
+                            borderRadius: BorderRadius.circular(40),
+                            borderSide: BorderSide.none
                         ),
                         suffixIcon: GestureDetector(
                           onTap: sendMessage,
                           child: Container(
                             decoration: BoxDecoration(
-                              gradient: LinearGradient(colors: [primaryColor, secondaryColor]),
-                              borderRadius: BorderRadius.circular(40)
+                                gradient: LinearGradient(colors: [primaryColor, secondaryColor]),
+                                borderRadius: BorderRadius.circular(40)
                             ),
                             child: const Icon(Icons.send, color: Colors.white),
                           ),

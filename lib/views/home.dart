@@ -115,60 +115,8 @@ class _HomeState extends State<Home> {
                 }).toList(),
               ),
               const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextField(
-                      controller: _date1Controller,
-                      decoration: const InputDecoration(
-                        labelText: 'Date Field 1',
-                        border: OutlineInputBorder(),
-                      ),
-                      readOnly: true,
-                      onTap: () async {
-                        final date = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2020),
-                          lastDate: DateTime(2030),
-                        );
-                        if (date != null) {
-                          setState(() {
-                            _date1 = date;
-                            _date1Controller.text = "${_date1.day.toString()}/${_date1.month.toString()}/${_date1.year.toString()}";
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextField(
-                      controller: _date2Controller,
-                      decoration: const InputDecoration(
-                        labelText: 'Date Field 2',
-                        border: OutlineInputBorder(),
-                      ),
-                      readOnly: true,
-                      onTap: () async {
-                        final date = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime.now(),
-                          firstDate: DateTime(2020),
-                          lastDate: DateTime(2030),
-                        );
-                        if (date != null) {
-                          setState(() {
-                            _date2 = date;
-                            _date2Controller.text = "${_date2.day.toString()}/${_date2.month.toString()}/${_date2.year.toString()}";
-                          });
-                        }
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
+              const CustomText(text: "Min and Max Budget", fontSize: 20),
+              const SizedBox(height: 5),
               Row(
                 children: [
                   const CustomText(text: "\$", fontSize: 20,),
