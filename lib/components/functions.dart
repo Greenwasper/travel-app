@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 
 String imagePathUrl = "https://cscdc.online/travel-images";
 
@@ -22,4 +23,33 @@ void toast (msg) {
     textColor: Colors.white,
     fontSize: 16.0
   );
+}
+
+String getDayWithSuffix(int day) {
+  if (day >= 1 && day <= 31) {
+    if (day >= 11 && day <= 13) {
+      return '${day}th';  // Special case for 11th, 12th, 13th
+    }
+    switch (day % 10) {
+      case 1: return '${day}st';
+      case 2: return '${day}nd';
+      case 3: return '${day}rd';
+      default: return '${day}th';
+    }
+  }
+  return '$day';  // Fallback for invalid days
+}
+
+String formatDate(DateTime date) {
+  final DateFormat dayFormat = DateFormat('d');
+  final DateFormat monthFormat = DateFormat('MMMM');
+  final DateFormat yearFormat = DateFormat('y');
+
+  // Get the day with suffix
+  String dayWithSuffix = getDayWithSuffix(date.day);
+
+  // Format the date
+  String formattedDate = '$dayWithSuffix ${monthFormat.format(date)}, ${yearFormat.format(date)}';
+
+  return formattedDate;
 }

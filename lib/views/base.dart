@@ -42,13 +42,9 @@ class _BaseState extends State<Base> {
   }
 
   void _onItemTapped(int index) {
-    if(index != 9){
-      setState(() {
-        _selectedIndex = index;
-      });
-    } else {
-      // showInfo(context);
-    }
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override

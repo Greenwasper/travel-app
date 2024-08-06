@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:febarproject/components/custom_text.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:febarproject/components/recommendation_card.dart';
 import 'package:lottie/lottie.dart';
 import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 
 import '../components/timeline_element.dart';
 import '../components/trip.dart';
@@ -25,6 +26,7 @@ class Recommendation extends StatefulWidget {
 class _RecommendationState extends State<Recommendation> {
 
   bool gottenRecommendations = false;
+  User user = FirebaseAuth.instance.currentUser!;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   Set<Map> recommendationsSet = {};
   List<Map> recommendations = [];
@@ -121,30 +123,61 @@ class _RecommendationState extends State<Recommendation> {
                   icon: Icons.category,
                   label: 'Categories',
                 ),
-                Consumer<TripModel>(
-                  builder: (context, value, child){
-                    return GestureDetector(
-                      onTap: () {
-                        if(selectedLocations.isNotEmpty) {
-                          for(var location in selectedLocations.toList()){
-                            value.addTrip(Trip(
-                                name: 'Trip to ${location['location']}',
-                                destination: location
-                            ));
-                          }
+                GestureDetector(
+                  onTap: () async {
+                    if(selectedLocations.isNotEmpty) {
 
-                          Navigator.pop(context);
-                          Navigator.pop(context);
-                        }
-                      },
-                      child: TimelineElement(
-                        icon: Icons.done,
-                        label: 'Done',
-                        selected: true,
-                      ),
-                    );
+                      List<Map> selectedLocationsList = selectedLocations.toList();
+
+                      DocumentSnapshot storedTrips = await _firestore.collection('trips').doc(user.uid).get();
+
+                      if(storedTrips.data() != null){
+                        await _firestore.collection('trips').doc(user.uid).update({
+                          'trips': FieldValue.arrayUnion(List.generate(selectedLocationsList.length, (index) {
+                            Map location = selectedLocationsList[index];
+
+                            return Trip(
+                              id: const Uuid().v4(),
+                              name: 'Trip to ${location['location']}',
+                              destination: location,
+                              date: Timestamp.now()
+                            ).toMap();
+                          }))
+                        });
+                      } else{
+                        await _firestore.collection('trips').doc(user.uid).set({
+                          'trips': FieldValue.arrayUnion(List.generate(selectedLocationsList.length, (index) {
+                            Map location = selectedLocationsList[index];
+
+                            return Trip(
+                              id: const Uuid().v4(),
+                              name: 'Trip to ${location['location']}',
+                              destination: location,
+                              date: Timestamp.now()
+                            ).toMap();
+                          }))
+                        });
+                      }
+
+                      print("Added to db");
+
+                      // for(var location in selectedLocations.toList()){
+                      //   context.read<TripModel>().addTrip(Trip(
+                      //       name: 'Trip to ${location['location']}',
+                      //       destination: location
+                      //   ));
+                      // }
+
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                    }
                   },
-                ),
+                  child: const TimelineElement(
+                    icon: Icons.done,
+                    label: 'Done',
+                    selected: true,
+                  ),
+        ),
               ],
             ),
             const SizedBox(height: 30),
