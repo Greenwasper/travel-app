@@ -41,19 +41,40 @@ class CustomCard extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  height: 60,
-                  width: 60,
-                  margin: const EdgeInsets.only(right: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(100),
-                    color: Colors.blue,
-                  ),
-                  child: const Center(
-                    child: Icon(
-                      Icons.cloud,
-                      color: Colors.yellow,
-                      size: 25,
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text('Weather'),
+                          content: Text('100% Chance of Rain'),
+                          actions: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.of(context).pop();  // Close the dialog
+                              },
+                              child: Text('OK'),
+                            ),
+                          ],
+                        );
+                      },
+                    );
+                  },
+                  child: Container(
+                    height: 60,
+                    width: 60,
+                    margin: const EdgeInsets.only(right: 10),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(100),
+                      color: Colors.blue,
+                    ),
+                    child: const Center(
+                      child: Icon(
+                        Icons.cloud,
+                        color: Colors.yellow,
+                        size: 25,
+                      ),
                     ),
                   ),
                 ),

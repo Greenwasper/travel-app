@@ -99,7 +99,7 @@ class _TripsState extends State<Trips> with SingleTickerProviderStateMixin{
                   Trip trip = Trip(
                     id: trips[index]['id'],
                     name: trips[index]['name'],
-                    destination: trips[index]['destination'],
+                    destinations: trips[index]['destination'],
                     date: trips[index]['date']
                   );
 
@@ -117,10 +117,23 @@ class _TripsState extends State<Trips> with SingleTickerProviderStateMixin{
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Center(child: CustomText(text: trip.name, fontSize: 17)),
-                              const SizedBox(height: 10),
-                              CustomText(text: "Destination: ${trip.destination['location']}"),
-                              CustomText(text: "Price: ${trip.destination['price']['max']}"),
-                              const SizedBox(height: 10),
+                              const SizedBox(height: 15),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: List.generate(trip.destinations.length, (index) {
+                                  Map destination = trip.destinations[index];
+                                  return Container(
+                                    margin: const EdgeInsets.only(bottom: 14),
+                                    child: Column(
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        CustomText(text: "Destination: ${destination['location']}"),
+                                        CustomText(text: "Price: ${destination['price']['max']}"),
+                                      ],
+                                    ),
+                                  );
+                                }),
+                              ),
                               Row(
                                 children: [
                                   const CustomText(text: "Trip Date:"),

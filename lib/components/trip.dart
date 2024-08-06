@@ -4,16 +4,16 @@ import 'package:uuid/uuid.dart';
 class Trip {
   String id;
   String name;
-  Map destination;
+  List destinations;
   Timestamp date;
 
-  Trip({required this.name, required this.destination, required this.date, required this.id});
+  Trip({required this.name, required this.destinations, required this.date, required this.id});
 
   Map toMap () {
     return {
       'id': id,
       'name': name,
-      'destination': destination,
+      'destination': destinations,
       'date': date
     };
   }

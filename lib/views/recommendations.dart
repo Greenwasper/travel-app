@@ -133,29 +133,25 @@ class _RecommendationState extends State<Recommendation> {
 
                       if(storedTrips.data() != null){
                         await _firestore.collection('trips').doc(user.uid).update({
-                          'trips': FieldValue.arrayUnion(List.generate(selectedLocationsList.length, (index) {
-                            Map location = selectedLocationsList[index];
-
-                            return Trip(
+                          'trips': FieldValue.arrayUnion([
+                            Trip(
                               id: const Uuid().v4(),
-                              name: 'Trip to ${location['location']}',
-                              destination: location,
+                              name: 'Trip ${(storedTrips.data() as Map).length + 1}',
+                              destinations: selectedLocationsList,
                               date: Timestamp.now()
-                            ).toMap();
-                          }))
+                            ).toMap()
+                          ])
                         });
                       } else{
                         await _firestore.collection('trips').doc(user.uid).set({
-                          'trips': FieldValue.arrayUnion(List.generate(selectedLocationsList.length, (index) {
-                            Map location = selectedLocationsList[index];
-
-                            return Trip(
-                              id: const Uuid().v4(),
-                              name: 'Trip to ${location['location']}',
-                              destination: location,
-                              date: Timestamp.now()
-                            ).toMap();
-                          }))
+                          'trips': FieldValue.arrayUnion([
+                            Trip(
+                                id: const Uuid().v4(),
+                                name: 'Trip 1',
+                                destinations: selectedLocationsList,
+                                date: Timestamp.now()
+                            ).toMap()
+                          ])
                         });
                       }
 
