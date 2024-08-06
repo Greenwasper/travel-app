@@ -1,22 +1,19 @@
-
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:febarproject/components/custom_text.dart';
 import 'package:febarproject/pages/wheretogo.dart';
-import 'package:febarproject/views/place_page.dart';
 import 'package:febarproject/views/settings.dart';
 import 'package:febarproject/views/trips.dart';
 import 'package:flutter/material.dart';
 
 import '../components/colors.dart';
-import '../components/custom_text.dart';
-import '../components/functions.dart';
-import '../components/menu_link.dart';
 import 'chat.dart';
 import 'home.dart';
-import 'info.dart';
 
 class Base extends StatefulWidget {
 
-  const Base({super.key});
+  final int initialIndex;
+
+  const Base({super.key, this.initialIndex = 0});
 
   @override
   State<Base> createState() => _BaseState();
@@ -24,18 +21,20 @@ class Base extends StatefulWidget {
 
 class _BaseState extends State<Base> {
 
-  int _selectedIndex = 0;
+  late int _selectedIndex;
   List<Widget> _pages = [];
 
   final GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
   @override
   void initState() {
+    _selectedIndex = widget.initialIndex;
+    // _bottomNavigationKey.currentState!.setPage(_selectedIndex);
     _pages = <Widget>[
-      Home(),
-      Chat(),
-      Trips(),
-      LastMenu()
+      const Home(),
+      const Chat(),
+      const Trips(),
+      const LastMenu()
     ];
 
     super.initState();
@@ -57,8 +56,8 @@ class _BaseState extends State<Base> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Colors.blue,
-                  Colors.purple[800]!
+                  primaryColor,
+                  secondaryColor
                 ]
               )
             ),
@@ -84,16 +83,22 @@ class _BaseState extends State<Base> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
-            DrawerHeader(
+            Container(
+              padding: const EdgeInsets.symmetric(vertical: 50),
               decoration: BoxDecoration(
-                color: primaryColor,
+                gradient: LinearGradient(
+                    colors: [
+                      primaryColor,
+                      secondaryColor
+                    ]
+                )
               ),
-              child: Text(
-                'Drawer Header',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 24,
-                ),
+              child: const Column(
+                children: [
+                  CircleAvatar(radius: 50),
+                  SizedBox(height: 14),
+                  CustomText(text: 'Travel App', fontSize: 24, color: Colors.white),
+                ],
               ),
             ),
             ListTile(

@@ -10,6 +10,7 @@ import 'package:uuid/uuid.dart';
 import '../components/timeline_element.dart';
 import '../components/trip.dart';
 import '../components/trip_model.dart';
+import 'base.dart';
 
 class Recommendation extends StatefulWidget {
 
@@ -164,8 +165,16 @@ class _RecommendationState extends State<Recommendation> {
                       //   ));
                       // }
 
-                      Navigator.pop(context);
-                      Navigator.pop(context);
+                      // Navigator.pop(context);
+                      // Navigator.pop(context);
+
+                      if(mounted){
+                        Navigator.pushAndRemoveUntil(
+                          context,
+                          MaterialPageRoute(builder: (context) => const Base(initialIndex: 2)),
+                              (Route<dynamic> route) => false,
+                        );
+                      }
                     }
                   },
                   child: const TimelineElement(
