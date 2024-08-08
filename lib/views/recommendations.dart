@@ -6,6 +6,7 @@ import 'package:febarproject/components/recommendation_card.dart';
 import 'package:lottie/lottie.dart';
 import 'package:uuid/uuid.dart';
 
+import '../components/colors.dart';
 import '../components/timeline_element.dart';
 import '../components/trip.dart';
 import 'base.dart';
@@ -112,66 +113,22 @@ class _RecommendationState extends State<Recommendation> {
         child: Column(
           children: [
             const SizedBox(height: 20),
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                const TimelineElement(
+                TimelineElement(
                   icon: Icons.edit,
                   label: 'Basic Input',
                 ),
-                const TimelineElement(
+                TimelineElement(
                   icon: Icons.category,
                   label: 'Categories',
                 ),
-                GestureDetector(
-                  onTap: () async {
-                    if(selectedLocations.isNotEmpty) {
-
-                      List<Map> selectedLocationsList = selectedLocations.toList();
-
-                      DocumentSnapshot storedTrips = await _firestore.collection('trips').doc(user.uid).get();
-
-                      if(storedTrips.data() != null){
-                        await _firestore.collection('trips').doc(user.uid).update({
-                          'trips': FieldValue.arrayUnion([
-                            Trip(
-                              id: const Uuid().v4(),
-                              name: 'Trip ${(storedTrips.data() as Map).length + 1}',
-                              destinations: selectedLocationsList,
-                              date: Timestamp.now()
-                            ).toMap()
-                          ])
-                        });
-                      } else{
-                        await _firestore.collection('trips').doc(user.uid).set({
-                          'trips': FieldValue.arrayUnion([
-                            Trip(
-                                id: const Uuid().v4(),
-                                name: 'Trip 1',
-                                destinations: selectedLocationsList,
-                                date: Timestamp.now()
-                            ).toMap()
-                          ])
-                        });
-                      }
-
-                      print("Added to db");
-
-                      if(mounted){
-                        Navigator.pushAndRemoveUntil(
-                          context,
-                          MaterialPageRoute(builder: (context) => const Base(initialIndex: 2)),
-                              (Route<dynamic> route) => false,
-                        );
-                      }
-                    }
-                  },
-                  child: const TimelineElement(
-                    icon: Icons.done,
-                    label: 'Done',
-                    selected: true,
-                  ),
-        ),
+                TimelineElement(
+                  icon: Icons.done,
+                  label: 'Done',
+                  selected: true,
+                ),
               ],
             ),
             const SizedBox(height: 10),
@@ -243,10 +200,64 @@ class _RecommendationState extends State<Recommendation> {
                 Column(
                   children: [
                     Lottie.asset('assets/recommendation.json', height: 300),
-                    const CustomText(text: "Fetching your recommendations!"),
+                    const CustomText(text: "Fetching your recommendations!", fontSize: 18),
                   ],
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            Visibility(
+              visible: gottenRecommendations && selectedLocations.isNotEmpty,
+              child: ElevatedButton(
+                onPressed: () async {
+                  if(selectedLocations.isNotEmpty) {
+
+                    List<Map> selectedLocationsList = selectedLocations.toList();
+
+                    DocumentSnapshot storedTrips = await _firestore.collection('trips').doc(user.uid).get();
+
+                    if(storedTrips.data() != null){
+                      await _firestore.collection('trips').doc(user.uid).update({
+                        'trips': FieldValue.arrayUnion([
+                          Trip(
+                              id: const Uuid().v4(),
+                              name: 'Trip ${(storedTrips.data() as Map).length + 1}',
+                              destinations: selectedLocationsList,
+                              date: Timestamp.now()
+                          ).toMap()
+                        ])
+                      });
+                    } else{
+                      await _firestore.collection('trips').doc(user.uid).set({
+                        'trips': FieldValue.arrayUnion([
+                          Trip(
+                              id: const Uuid().v4(),
+                              name: 'Trip 1',
+                              destinations: selectedLocationsList,
+                              date: Timestamp.now()
+                          ).toMap()
+                        ])
+                      });
+                    }
+
+                    print("Added to db");
+
+                    if(mounted){
+                      Navigator.pushAndRemoveUntil(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Base(initialIndex: 2)),
+                            (Route<dynamic> route) => false,
+                      );
+                    }
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: primaryColor,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                ),
+                child: const Text("Continue"),
+              ),
             ),
           ],
         ),

@@ -134,12 +134,12 @@ class _SettingsState extends State<Settings> {
                 height: double.infinity,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [
-                          primaryColor,
-                          secondaryColor
-                        ]
-                    )
+                  gradient: LinearGradient(
+                    colors: [
+                      primaryColor,
+                      secondaryColor
+                    ]
+                  )
                 ),
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -160,20 +160,20 @@ class _SettingsState extends State<Settings> {
                           }
                         },
                         child: Container(
-                            height: 50,
-                            width: 200,
-                            decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(40),
-                                gradient: LinearGradient(
-                                    colors: [
-                                      Colors.red.shade400,
-                                      Colors.red.shade400,
-                                    ]
-                                )
-                            ),
-                            child: const Center(
-                              child: CustomText(text: "Logout", color: Colors.white, fontSize: 17),
+                          height: 50,
+                          width: 200,
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(40),
+                            gradient: LinearGradient(
+                              colors: [
+                                Colors.red.shade400,
+                                Colors.red.shade400,
+                              ]
                             )
+                          ),
+                          child: const Center(
+                            child: CustomText(text: "Logout", color: Colors.white, fontSize: 17),
+                          )
                         ),
                       ),
                     ],

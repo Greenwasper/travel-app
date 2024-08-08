@@ -90,124 +90,140 @@ class _TripsState extends State<Trips> with SingleTickerProviderStateMixin{
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
         child: Column(
-            children: [
-              const SizedBox(height: 20),
-              const CustomText(text: "Your Trips", fontSize: 25),
-              const SizedBox(height: 20),
-              Column(
-                children: List.generate(trips.length, (index) {
-                  Trip trip = Trip(
-                    id: trips[index]['id'],
-                    name: trips[index]['name'],
-                    destinations: trips[index]['destination'],
-                    date: trips[index]['date']
-                  );
+          children: [
+            const SizedBox(height: 20),
+            const CustomText(text: "Your Trips", fontSize: 25),
+            const SizedBox(height: 20),
+            Column(
+              children: List.generate(trips.length, (index) {
+                Trip trip = Trip(
+                  id: trips[index]['id'],
+                  name: trips[index]['name'],
+                  destinations: trips[index]['destination'],
+                  date: trips[index]['date']
+                );
 
-                  return Column(
-                    children: [
-                      Slidable(
-                        endActionPane: ActionPane(
-                          motion: const StretchMotion(),
+                return Column(
+                  children: [
+                    Slidable(
+                      endActionPane: ActionPane(
+                        motion: const StretchMotion(),
+                        children: [
+                          SlidableAction(
+                            onPressed: (context) async {
+                              List updatedTrips = trips.where((item) => item['id'] != trips[index]['id']).toList();
+
+                              trips = updatedTrips;
+
+                              print(updatedTrips);
+
+                              await _firestore.collection('trips').doc(user.uid).update({
+                                'trips': updatedTrips
+                              });
+
+                              print('Deleted');
+
+                              setState(() {
+
+                              });
+                            },
+                            icon: Icons.delete,
+                            backgroundColor: Colors.red.shade300,
+                          )
+                        ],
+                      ),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+                        width: double.infinity,
+                        decoration: BoxDecoration(
+                          color: Colors.transparent,
+                          border: Border.all(color: Colors.blue, width: 3),
+                        ),
+                        child: Stack(
                           children: [
-                            SlidableAction(
-                              onPressed: (context) {},
-                              icon: Icons.delete,
-                              backgroundColor: Colors.red.shade300,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Center(child: CustomText(text: trip.name, fontSize: 17)),
+                                const SizedBox(height: 15),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: List.generate(trip.destinations.length, (index) {
+                                    Map destination = trip.destinations[index];
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 14),
+                                      child: Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
+                                        children: [
+                                          CustomText(text: "Destination: ${destination['location']}"),
+                                          CustomText(text: "Price: ${destination['price']['max']}"),
+                                        ],
+                                      ),
+                                    );
+                                  }),
+                                ),
+                                Row(
+                                  children: [
+                                    const CustomText(text: "Trip Date:"),
+                                    const SizedBox(width: 10),
+                                    Expanded(
+                                      child: TextField(
+                                        controller: controllers[trip.id],
+                                        decoration: const InputDecoration(
+                                          hintText: 'Enter trip date',
+                                          border: UnderlineInputBorder(),
+                                        ),
+                                        readOnly: true,
+                                        onTap: () async {
+                                          final date = await showDatePicker(
+                                            context: context,
+                                            initialDate: selectedDates[trip.id],
+                                            firstDate: DateTime(2024),
+                                            lastDate: DateTime(2026),
+                                          );
+                                          if (date != null) {
+
+                                            List updatedTrips = trips.map((map) {
+                                              if (map['id'] == trip.id) {
+                                                return {
+                                                  ...map,
+                                                  'date': Timestamp.fromDate(date)
+                                                };
+                                              }
+                                              return map;
+                                            }).toList();
+
+                                            await _firestore.collection('trips').doc(user.uid).update({
+                                              'trips': updatedTrips
+                                            });
+
+                                            setState(() {
+                                              selectedDates[trip.id] = date;
+                                              controllers[trip.id]!.text = formatDate(date);
+                                            });
+                                          }
+                                        },
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ]
+                            ),
+                            const Positioned(
+                              top: 7,
+                              right: 7,
+                              child: Icon(Icons.location_on_outlined, size: 40, color: Colors.blue,),
                             )
                           ],
                         ),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                          width: double.infinity,
-                          decoration: BoxDecoration(
-                            color: Colors.transparent,
-                            border: Border.all(color: Colors.blue, width: 3),
-                          ),
-                          child: Stack(
-                            children: [
-                              Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Center(child: CustomText(text: trip.name, fontSize: 17)),
-                                    const SizedBox(height: 15),
-                                    Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
-                                      children: List.generate(trip.destinations.length, (index) {
-                                        Map destination = trip.destinations[index];
-                                        return Container(
-                                          margin: const EdgeInsets.only(bottom: 14),
-                                          child: Column(
-                                            crossAxisAlignment: CrossAxisAlignment.start,
-                                            children: [
-                                              CustomText(text: "Destination: ${destination['location']}"),
-                                              CustomText(text: "Price: ${destination['price']['max']}"),
-                                            ],
-                                          ),
-                                        );
-                                      }),
-                                    ),
-                                    Row(
-                                      children: [
-                                        const CustomText(text: "Trip Date:"),
-                                        const SizedBox(width: 10),
-                                        Expanded(
-                                          child: TextField(
-                                            controller: controllers[trip.id],
-                                            decoration: const InputDecoration(
-                                              hintText: 'Enter trip date',
-                                              border: UnderlineInputBorder(),
-                                            ),
-                                            readOnly: true,
-                                            onTap: () async {
-                                              final date = await showDatePicker(
-                                                context: context,
-                                                initialDate: selectedDates[trip.id],
-                                                firstDate: DateTime(2024),
-                                                lastDate: DateTime(2026),
-                                              );
-                                              if (date != null) {
-
-                                                List updatedTrips = trips.map((map) {
-                                                  if (map['id'] == trip.id) {
-                                                    return {
-                                                      ...map,
-                                                      'date': Timestamp.fromDate(date)
-                                                    };
-                                                  }
-                                                  return map;
-                                                }).toList();
-
-                                                await _firestore.collection('trips').doc(user.uid).update({
-                                                  'trips': updatedTrips
-                                                });
-
-                                                setState(() {
-                                                  selectedDates[trip.id] = date;
-                                                  controllers[trip.id]!.text = formatDate(date);
-                                                });
-                                              }
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ]
-                              ),
-                              const Positioned(
-                                top: 7,
-                                right: 7,
-                                child: Icon(Icons.location_on_outlined, size: 40, color: Colors.blue,),
-                              )
-                            ],
-                          ),
-                        ),
                       ),
-                      const SizedBox(height: 15),
-                    ],
-                  );
-                }),
-              )
-            ]
+                    ),
+                    const SizedBox(height: 15),
+                  ],
+                );
+              }),
+            )
+          ]
         ),
       ),
     ) : Container(
