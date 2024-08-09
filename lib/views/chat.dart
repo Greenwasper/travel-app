@@ -87,11 +87,10 @@ class _ChatState extends State<Chat> {
                           );
                         }
 
+                        List allUsers = snapshot.data!.docs;
                         QueryDocumentSnapshot userInfo = snapshot.data!.docs.firstWhere((u) {return u['email'] == user.email;});
                         List requests = userInfo['requests'];
                         List friends = userInfo['friends'];
-
-                        print(friends);
 
                         return SingleChildScrollView(
                           child: Column(
@@ -142,12 +141,58 @@ class _ChatState extends State<Chat> {
                                             ),
                                             title: CustomText(text: "${data['firstname']} ${data['lastnamename']}"),
                                             onTap: () async {
+                                              QueryDocumentSnapshot tappedUserInfo = allUsers.firstWhere((u) {return u['uid'] == doc['uid'];});
+                                              List tappedUsersRequests = tappedUserInfo['requests'];
 
+                                              bool hasRequested = tappedUsersRequests.contains(user.uid);
+                                              bool isFriend = friends.contains(doc['uid']);
+
+                                              await showDialog(
+                                                context: context,
+                                                builder: (BuildContext context) {
+                                                  return AlertDialog(
+                                                    title: const Text('Add Friend'),
+                                                    content: Text(isFriend ? '${data['firstname']} ${data['lastnamename']} is already your friend' : hasRequested ? 'You have already requested to be friends with ${data['firstname']} ${data['lastnamename']}' : 'Add ${data['firstname']} ${data['lastnamename']} as a friend?'),
+                                                    actions: isFriend ? [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        child: const Text('OK'),
+                                                      ),
+                                                    ] : hasRequested ? [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        child: const Text('OK'),
+                                                      ),
+                                                    ] :
+                                                    [
+                                                      TextButton(
+                                                        onPressed: () {
+                                                          Navigator.of(context).pop();
+                                                        },
+                                                        child: const Text('Cancel'),
+                                                      ),
+                                                      TextButton(
+                                                        onPressed: () async {
+                                                          _firestore.collection('users').doc(doc['uid']).update({
+                                                            'requests': FieldValue.arrayUnion([user.uid])
+                                                          });
+                                                          Navigator.pop(context);
+                                                        },
+                                                        child: const Text('Add', style: TextStyle(color: Colors.green)),
+                                                      ),
+                                                    ],
+                                                  );
+                                                },
+                                              );
                                             },
                                           ),
                                           const Divider(),
                                         ],
-                                      ) : SizedBox();
+                                      ) : const SizedBox();
                                     }
 
                                     return Column(
@@ -158,10 +203,12 @@ class _ChatState extends State<Chat> {
                                           ),
                                           title: CustomText(text: "${data['firstname']} ${data['lastnamename']}"),
                                           onTap: () async {
+                                            QueryDocumentSnapshot tappedUserInfo = allUsers.firstWhere((u) {return u['uid'] == doc['uid'];});
+                                            List tappedUsersRequests = tappedUserInfo['requests'];
 
-                                            // await _firestore.collection('users').doc(doc['uid']).get();
+                                            print(tappedUserInfo['firstname']);
 
-                                            bool hasRequested = requests.contains(doc['uid']);
+                                            bool hasRequested = tappedUsersRequests.contains(user.uid);
                                             bool isFriend = friends.contains(doc['uid']);
 
                                             await showDialog(
@@ -388,8 +435,23 @@ class _ChatState extends State<Chat> {
                                                     TextButton(
                                                       onPressed: () {
 
-                                                        requests
+                                                        List updatedRequests = [];
 
+                                                        updatedRequests = requests.where((item) => item != doc['uid']).toList();
+
+                                                        _firestore.collection('users').doc(doc['uid']).update({
+                                                          'friends': FieldValue.arrayUnion([user.uid])
+                                                        });
+
+                                                        _firestore.collection('users').doc(user.uid).update({
+                                                          'friends': FieldValue.arrayUnion([doc['uid']])
+                                                        });
+
+                                                        _firestore.collection('users').doc(user.uid).update({
+                                                          'requests': updatedRequests
+                                                        });
+
+                                                        Navigator.of(context).pop();
                                                       },
                                                       child: const Text('Accept', style: TextStyle(color: Colors.green)),
                                                     ),

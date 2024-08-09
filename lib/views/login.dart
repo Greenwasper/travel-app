@@ -78,12 +78,14 @@ class _LoginState extends State<Login> {
                   child: SingleChildScrollView(
                     child: Column(
                       children: [
-                        const SizedBox(height: 120),
+                        const SizedBox(height: 50),
+                        Image.asset('assets/logo.png', width: 100),
+                        const SizedBox(height: 20),
                         Column(
                           children: [
                             TextField(
                               controller: _email,
-                              decoration: InputDecoration(labelText: 'Email'),
+                              decoration: const InputDecoration(labelText: 'Email'),
                             ),
                             const SizedBox(height: 20),
                             TextField(

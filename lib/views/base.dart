@@ -63,7 +63,7 @@ class _BaseState extends State<Base> {
             ),
           ),
           // backgroundColor: Colors.blue,
-          title: const Text("TravelApp", style: TextStyle(color: Colors.white)),
+          title: const Text("Travel App", style: TextStyle(color: Colors.white)),
           centerTitle: true,
           iconTheme: const IconThemeData(
             color: Colors.white, // Change the drawer icon color to white
@@ -84,26 +84,30 @@ class _BaseState extends State<Base> {
           padding: EdgeInsets.zero,
           children: <Widget>[
             Container(
-              padding: const EdgeInsets.symmetric(vertical: 50),
+              padding: const EdgeInsets.only(top: 70, bottom: 50),
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                    colors: [
-                      primaryColor,
-                      secondaryColor
-                    ]
+                  colors: [
+                    primaryColor,
+                    secondaryColor
+                  ]
                 )
               ),
-              child: const Column(
+              child: Column(
                 children: [
-                  CircleAvatar(radius: 50),
-                  SizedBox(height: 14),
-                  CustomText(text: 'Travel App', fontSize: 24, color: Colors.white),
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.transparent,
+                    child: Image.asset('assets/logo.png'),
+                  ),
+                  const SizedBox(height: 14),
+                  const CustomText(text: 'Travel App', fontSize: 24, color: Colors.white),
                 ],
               ),
             ),
             ListTile(
-              leading: Icon(Icons.home),
-              title: Text('Home'),
+              leading: const Icon(Icons.home),
+              title: const Text('Home'),
               onTap: () {
                 setState(() {
                   Navigator.pop(context);
@@ -113,15 +117,15 @@ class _BaseState extends State<Base> {
               },
             ),
             ListTile(
-              leading: Icon(Icons.settings),
-              title: Text('Settings'),
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const Settings()));
               },
             ),
             ListTile(
-              leading: Icon(Icons.contacts),
-              title: Text('Contact Us'),
+              leading: const Icon(Icons.contacts),
+              title: const Text('Contact Us'),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactUs()));
               },

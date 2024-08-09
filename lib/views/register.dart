@@ -58,7 +58,9 @@ class _RegisterState extends State<Register> {
         'offers': '',
         'pendingbalance': '',
         'submittedproposals': '',
-        'email': userCredential.user!.email
+        'email': userCredential.user!.email,
+        'requests': [],
+        'friends': []
       });
 
       isError = false;

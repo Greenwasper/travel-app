@@ -134,9 +134,9 @@ class _RecommendationState extends State<Recommendation> {
             const SizedBox(height: 10),
             const Center(child: CustomText(text: "Recommendations", fontSize: 25)),
             const SizedBox(height: 1),
-            Center(child: CustomText(text: "Your Budget: ${widget.rangeValues.end}", fontSize: 17)),
+            Center(child: CustomText(text: "Your Budget: ¢${widget.rangeValues.end}", fontSize: 17)),
             const SizedBox(height: 1),
-            Center(child: CustomText(text: "Selected Destinations Price: $totalPrice", fontSize: 17)),
+            Center(child: CustomText(text: "Selected Destinations Price: ¢$totalPrice", fontSize: 17)),
             const SizedBox(height: 20),
             Column(
               mainAxisAlignment: gottenRecommendations ? MainAxisAlignment.start : MainAxisAlignment.center,

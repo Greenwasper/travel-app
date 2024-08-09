@@ -19,6 +19,7 @@ class _SettingsState extends State<Settings> {
   List<bool> tileValues = [false];
 
   User? user = FirebaseAuth.instance.currentUser;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   String userEmail = '';
   Map userInfo = {};
 
@@ -31,7 +32,7 @@ class _SettingsState extends State<Settings> {
   bool isEditingPhone = false;
 
   void getUserInfo () async {
-    DocumentSnapshot userInfoSnapshot = await FirebaseFirestore.instance.collection('users').doc(user!.uid).get();
+    DocumentSnapshot userInfoSnapshot = await _firestore.collection('users').doc(user!.uid).get();
     userInfo = userInfoSnapshot.data() as Map;
     print(userInfo);
 
@@ -203,7 +204,7 @@ class _SettingsState extends State<Settings> {
                         Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          CustomText(text: "First Name", fontSize: 12),
+                          const CustomText(text: "First Name", fontSize: 12),
                           const SizedBox(height: 4),
                           Row(
                             children: [
@@ -222,7 +223,11 @@ class _SettingsState extends State<Settings> {
                               const SizedBox(width: 10),
                               isEditingFirstName ?
                               IconButton(
-                                onPressed: (){
+                                onPressed: () {
+                                  _firestore.collection('users').doc(user!.uid).update({
+                                    'firstname': _firstName.text
+                                  });
+
                                   setState(() {
                                     isEditingFirstName = false;
                                   });
@@ -243,10 +248,11 @@ class _SettingsState extends State<Settings> {
                           )
                         ],
                       ),
+                        const SizedBox(height: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomText(text: "Last Name", fontSize: 12),
+                            const CustomText(text: "Last Name", fontSize: 12),
                             const SizedBox(height: 4),
                             Row(
                               children: [
@@ -266,6 +272,9 @@ class _SettingsState extends State<Settings> {
                                 isEditingLastName ?
                                 IconButton(
                                   onPressed: (){
+                                    _firestore.collection('users').doc(user!.uid).update({
+                                      'lastnamename': _lastName.text
+                                    });
                                     setState(() {
                                       isEditingLastName = false;
                                     });
@@ -286,10 +295,11 @@ class _SettingsState extends State<Settings> {
                             )
                           ],
                         ),
+                        const SizedBox(height: 10),
                         Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            CustomText(text: "Phone Number", fontSize: 12),
+                            const CustomText(text: "Phone Number", fontSize: 12),
                             const SizedBox(height: 4),
                             Row(
                               children: [
@@ -309,6 +319,10 @@ class _SettingsState extends State<Settings> {
                                 isEditingPhone ?
                                 IconButton(
                                   onPressed: (){
+                                    _firestore.collection('users').doc(user!.uid).update({
+                                      'phonenumber': _phone.text
+                                    });
+
                                     setState(() {
                                       isEditingPhone = false;
                                     });

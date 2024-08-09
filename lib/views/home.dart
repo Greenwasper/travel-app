@@ -119,7 +119,7 @@ class _HomeState extends State<Home> {
               const SizedBox(height: 5),
               Row(
                 children: [
-                  const CustomText(text: "\$", fontSize: 20,),
+                  const CustomText(text: "¢", fontSize: 20,),
                   Expanded(
                     child: RangeSlider(
                       values: _currentRangeValues,
