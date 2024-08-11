@@ -128,13 +128,10 @@ class _LastMenuState extends State<LastMenu> {
                             children: snapshot.data!.docs.map((document){
                               return GestureDetector(
                                 onTap: (){
-                                  Navigator.push(context, MaterialPageRoute(builder: (context){
-                                    return WhatToDoDetails(whattodoId: document.id,);
-                                  }));
+                                  Navigator.push(context, MaterialPageRoute(builder: (context){return WhatToDoDetails(whattodoId: document.id,);}));
                                 },
-                                child: LocationTile(label: document["name"], icon: Icons.plus_one, iconBackgroundColor: Colors.yellow.shade800,)
+                                child: LocationTile(label: document["name"], icon: Icons.plus_one, iconBackgroundColor: Colors.yellow.shade800)
                               );
-
                             }).toList(),
                           ),
                         );
@@ -144,7 +141,6 @@ class _LastMenuState extends State<LastMenu> {
                     },
                   );
                 });
-
               },
               child: InfoTile(label: 'Top Attractions', icon: Icons.plus_one, iconBackgroundColor: Colors.yellow.shade800)
             ),

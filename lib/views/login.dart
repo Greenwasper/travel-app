@@ -18,12 +18,17 @@ class _LoginState extends State<Login> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   bool isLoading = false;
+  bool errorVisible = false;
+  String errorText = "";
 
   final TextEditingController _email = TextEditingController();
   final TextEditingController _password = TextEditingController();
   bool passwordObscured = true;
 
   Future<void> login() async {
+    setState(() {
+      isLoading = true;
+    });
     try {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _email.text,
@@ -34,8 +39,25 @@ class _LoginState extends State<Login> {
         'uid': userCredential.user!.uid,
         'email': userCredential.user!.email,
       }, SetOptions(merge: true));
-    } catch (e) {
-      print('Error signing in: $e');
+    } on FirebaseAuthException catch (e) {
+      print('Error signing in: ${e.code}');
+
+      switch(e.code){
+        case 'channel-error':
+          errorText = "An error has occurred";
+          break;
+        case 'invalid-email':
+          errorText = "Invalid email format";
+          break;
+        case 'invalid-credential':
+          errorText = "Invalid password";
+          break;
+      }
+
+      setState(() {
+        errorVisible = true;
+        isLoading = false;
+      });
     }
   }
 
@@ -50,12 +72,12 @@ class _LoginState extends State<Login> {
                 height: double.infinity,
                 width: double.infinity,
                 decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        colors: [
-                          Colors.blue,
-                          Colors.purple[800]!
-                        ]
-                    )
+                  gradient: LinearGradient(
+                    colors: [
+                      Colors.blue,
+                      Colors.purple[800]!
+                    ]
+                  )
                 ),
                 child: const Padding(
                   padding: EdgeInsets.only(top: 70, left: 20),
@@ -69,11 +91,11 @@ class _LoginState extends State<Login> {
                   height: double.infinity,
                   width: double.infinity,
                   decoration: const BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(40),
-                        topRight: Radius.circular(40),
-                      )
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(40),
+                      topRight: Radius.circular(40),
+                    )
                   ),
                   child: SingleChildScrollView(
                     child: Column(
@@ -95,25 +117,25 @@ class _LoginState extends State<Login> {
                               enableSuggestions: false,
                               decoration: InputDecoration(
                                 suffix: IconButton(
-                                    onPressed: () {
-                                      if(passwordObscured){
-                                        setState(() {
-                                          passwordObscured = false;
-                                        });
-                                      } else {
-                                        setState(() {
-                                          passwordObscured = true;
-                                        });
-                                      }
-                                    },
-                                    icon: Icon(passwordObscured ? Icons.visibility_off : Icons.visibility, size: 20,)),
+                                  onPressed: () {
+                                    if(passwordObscured){
+                                      setState(() {
+                                        passwordObscured = false;
+                                      });
+                                    } else {
+                                      setState(() {
+                                        passwordObscured = true;
+                                      });
+                                    }
+                                  },
+                                  icon: Icon(passwordObscured ? Icons.visibility_off : Icons.visibility, size: 20,)),
                                 contentPadding: const EdgeInsets.symmetric(vertical: 5),
                                 label: const Text("Password", style: TextStyle(color: Colors.black)),
                                 enabledBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.black)
+                                  borderSide: BorderSide(color: Colors.black)
                                 ),
                                 focusedBorder: const UnderlineInputBorder(
-                                    borderSide: BorderSide(color: Colors.black)
+                                  borderSide: BorderSide(color: Colors.black)
                                 ),
                               ),
                             ),
@@ -126,26 +148,30 @@ class _LoginState extends State<Login> {
                                 ),
                               ],
                             ),
+                            Visibility(
+                              visible: errorVisible,
+                              child: CustomText(text: errorText, color: Colors.red),
+                            ),
                             const SizedBox(height: 20),
                             InkWell(
                               onTap: () async {
                                 await login();
                               },
                               child: Container(
-                                  height: 55,
-                                  width: double.infinity,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      gradient: LinearGradient(
-                                          colors: [
-                                            Colors.blue,
-                                            Colors.purple[800]!
-                                          ]
-                                      )
-                                  ),
-                                  child: const Center(
-                                    child: CustomText(text: "SIGN IN", color: Colors.white, fontSize: 20),
+                                height: 55,
+                                width: double.infinity,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(30),
+                                  gradient: LinearGradient(
+                                    colors: [
+                                      Colors.blue,
+                                      Colors.purple[800]!
+                                    ]
                                   )
+                                ),
+                                child: const Center(
+                                  child: CustomText(text: "SIGN IN", color: Colors.white, fontSize: 20),
+                                )
                               ),
                             ),
                             const SizedBox(height: 30)

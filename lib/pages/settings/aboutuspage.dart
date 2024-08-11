@@ -10,8 +10,7 @@ class Aboutuspage extends StatefulWidget {
 
 class _AboutuspageState extends State<Aboutuspage> {
 
-  final CollectionReference _aboutus =
-  FirebaseFirestore.instance.collection('About us');
+  final CollectionReference _aboutus = FirebaseFirestore.instance.collection('About us');
   @override
   Widget build(BuildContext context) {
     return Scaffold(

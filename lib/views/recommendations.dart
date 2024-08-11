@@ -220,10 +220,10 @@ class _RecommendationState extends State<Recommendation> {
                       await _firestore.collection('trips').doc(user.uid).update({
                         'trips': FieldValue.arrayUnion([
                           Trip(
-                              id: const Uuid().v4(),
-                              name: 'Trip ${(storedTrips.data() as Map).length + 1}',
-                              destinations: selectedLocationsList,
-                              date: Timestamp.now()
+                            id: const Uuid().v4(),
+                            name: 'Trip ${selectedLocationsList.first['location']}',
+                            destinations: selectedLocationsList,
+                            date: Timestamp.now()
                           ).toMap()
                         ])
                       });
@@ -231,10 +231,10 @@ class _RecommendationState extends State<Recommendation> {
                       await _firestore.collection('trips').doc(user.uid).set({
                         'trips': FieldValue.arrayUnion([
                           Trip(
-                              id: const Uuid().v4(),
-                              name: 'Trip 1',
-                              destinations: selectedLocationsList,
-                              date: Timestamp.now()
+                            id: const Uuid().v4(),
+                            name: 'Trip ${selectedLocationsList.first['location']}',
+                            destinations: selectedLocationsList,
+                            date: Timestamp.now()
                           ).toMap()
                         ])
                       });

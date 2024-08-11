@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:febarproject/components/custom_text.dart';
 import 'package:febarproject/components/functions.dart';
+import 'package:febarproject/views/share_trip.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -106,6 +107,19 @@ class _TripsState extends State<Trips> with SingleTickerProviderStateMixin{
                 return Column(
                   children: [
                     Slidable(
+                      startActionPane: ActionPane(
+                        motion: const StretchMotion(),
+                        children: [
+                          SlidableAction(
+                            onPressed: (context) {
+                              Navigator.push(context, MaterialPageRoute(builder: (context) => ShareTrip(trip: trip,)));
+                            },
+                            icon: Icons.share,
+                            foregroundColor: Colors.white,
+                            backgroundColor: Colors.blue.shade300,
+                          )
+                        ],
+                      ),
                       endActionPane: ActionPane(
                         motion: const StretchMotion(),
                         children: [
@@ -128,6 +142,7 @@ class _TripsState extends State<Trips> with SingleTickerProviderStateMixin{
                               });
                             },
                             icon: Icons.delete,
+                            foregroundColor: Colors.white,
                             backgroundColor: Colors.red.shade300,
                           )
                         ],

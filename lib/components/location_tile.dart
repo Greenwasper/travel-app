@@ -31,8 +31,8 @@ class LocationTile extends StatelessWidget {
                 backgroundColor: iconBackgroundColor,
                 child: Icon(icon, color: Colors.white)
               ),
-              const SizedBox(width: 15),
-              CustomText(text: label, fontSize: 20),
+              const SizedBox(width: 20),
+              Expanded(child: Text(label, style: const TextStyle(fontSize: 20, overflow: TextOverflow.fade))),
             ],
           ),
         ],

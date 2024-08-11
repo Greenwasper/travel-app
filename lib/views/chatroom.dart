@@ -132,7 +132,9 @@ class _ChatRoomState extends State<ChatRoom> {
                               ChatBubble(
                                 message: data['message'],
                                 isSender: data['senderId'] == user!.uid,
-                                timeStamp: data['timeStamp']
+                                timeStamp: data['timeStamp'],
+                                tripMap: data['trip'],
+                                senderUid: user!.uid,
                               ),
                             ],
                           )

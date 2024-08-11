@@ -4,6 +4,7 @@ import 'package:febarproject/pages/wheretogo.dart';
 import 'package:febarproject/views/contact_us.dart';
 import 'package:febarproject/views/settings.dart';
 import 'package:febarproject/views/trips.dart';
+import 'package:febarproject/views/about_us.dart';
 import 'package:flutter/material.dart';
 
 import '../components/colors.dart';
@@ -49,35 +50,23 @@ class _BaseState extends State<Base> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(kToolbarHeight),
-        child: AppBar(
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [
-                  primaryColor,
-                  secondaryColor
-                ]
-              )
-            ),
+      appBar: AppBar(
+        flexibleSpace: Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                primaryColor,
+                secondaryColor
+              ]
+            )
           ),
-          // backgroundColor: Colors.blue,
-          title: const Text("Travel App", style: TextStyle(color: Colors.white)),
-          centerTitle: true,
-          iconTheme: const IconThemeData(
-            color: Colors.white, // Change the drawer icon color to white
-          ),
-          elevation: 0,
-          // actions: <Widget>[
-          //   IconButton(
-          //     icon: const Icon(Icons.person, color: Colors.white),
-          //     onPressed: () {
-          //       Navigator.push(context, MaterialPageRoute(builder: (context) => const Settings()));
-          //     },
-          //   )
-          // ],
         ),
+        title: const Text("BudgetWise", style: TextStyle(color: Colors.white)),
+        centerTitle: true,
+        iconTheme: const IconThemeData(
+          color: Colors.white, // Change the drawer icon color to white
+        ),
+        elevation: 0,
       ),
       drawer: Drawer(
         child: ListView(
@@ -101,7 +90,7 @@ class _BaseState extends State<Base> {
                     child: Image.asset('assets/logo.png'),
                   ),
                   const SizedBox(height: 14),
-                  const CustomText(text: 'Travel App', fontSize: 24, color: Colors.white),
+                  const CustomText(text: 'BudgetWise', fontSize: 24, color: Colors.white),
                 ],
               ),
             ),
@@ -117,10 +106,10 @@ class _BaseState extends State<Base> {
               },
             ),
             ListTile(
-              leading: const Icon(Icons.settings),
-              title: const Text('Settings'),
+              leading: const Icon(Icons.info),
+              title: const Text('About Us'),
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context) => const Settings()));
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const AboutUs()));
               },
             ),
             ListTile(
@@ -128,6 +117,13 @@ class _BaseState extends State<Base> {
               title: const Text('Contact Us'),
               onTap: () {
                 Navigator.push(context, MaterialPageRoute(builder: (context) => const ContactUs()));
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text('Settings'),
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (context) => const Settings()));
               },
             ),
           ],

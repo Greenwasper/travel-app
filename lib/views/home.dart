@@ -15,14 +15,12 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
 
   String _selectedItem = 'Volta Region';
-  late DateTime _date1;
-  late DateTime _date2;
   final TextEditingController _budgetController = TextEditingController();
-  final TextEditingController _date1Controller = TextEditingController();
-  final TextEditingController _date2Controller = TextEditingController();
+  final TextEditingController _minController = TextEditingController(text: '0');
+  final TextEditingController _maxController = TextEditingController(text: '0');
   final List<String> _items = ['Volta Region', 'Eastern Region', 'Greater Accra Region', 'Central Region', 'Upper East Region', 'Northern Region', 'Ahafo Region', 'Western Region'];
-  RangeValues _currentRangeValues = const RangeValues(0, 100);
-  double maxRange = 100;
+  RangeValues _currentRangeValues = const RangeValues(0, 0);
+  double maxRange = 0;
 
   @override
   void initState() {
@@ -34,8 +32,8 @@ class _HomeState extends State<Home> {
     super.dispose();
 
     _budgetController.dispose();
-    _date1Controller.dispose();
-    _date2Controller.dispose();
+    _minController.dispose();
+    _maxController.dispose();
   }
 
   @override
@@ -74,13 +72,15 @@ class _HomeState extends State<Home> {
                   border: OutlineInputBorder(),
                 ),
                 onChanged: (value){
-                  if(value != '' && int.parse(value) > 100){
+                  if(value != '' && int.parse(value) > 0){
                     _currentRangeValues = RangeValues(0, int.parse(value).toDouble());
                     maxRange = int.parse(value).toDouble();
                   } else{
-                    _currentRangeValues = const RangeValues(0, 100);
-                    maxRange = 100;
+                    _currentRangeValues = const RangeValues(0, 0);
+                    maxRange = 0;
                   }
+
+                  _maxController.text = value;
 
                   setState(() {
 
@@ -115,6 +115,32 @@ class _HomeState extends State<Home> {
                 }).toList(),
               ),
               const SizedBox(height: 20),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _minController,
+                      decoration: const InputDecoration(
+                        labelText: 'Min Budget',
+                        border: OutlineInputBorder(),
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: TextField(
+                      controller: _maxController,
+                      decoration: const InputDecoration(
+                        labelText: 'Max Budget',
+                        border: OutlineInputBorder(),
+                      ),
+                      readOnly: true,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
               const CustomText(text: "Min and Max Budget", fontSize: 20),
               const SizedBox(height: 5),
               Row(
@@ -132,6 +158,8 @@ class _HomeState extends State<Home> {
                       ),
                       onChanged: (RangeValues values) {
                         setState(() {
+                          _minController.text = values.start.toStringAsFixed(0);
+                          _maxController.text = values.end.toStringAsFixed(0);
                           _currentRangeValues = values;
                         });
                       },

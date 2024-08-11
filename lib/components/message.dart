@@ -7,6 +7,7 @@ class Message {
   String senderName;
   final String message;
   final Timestamp timeStamp;
+  Map trip;
 
   Message({
     required this.senderId,
@@ -14,7 +15,8 @@ class Message {
     required this.receiverId,
     this.senderName = '',
     required this.message,
-    required this.timeStamp
+    required this.timeStamp,
+    this.trip = const {}
   });
 
   Map<String, dynamic> toMap () {
@@ -24,7 +26,8 @@ class Message {
       'name': senderName,
       'receiverId': receiverId,
       'message': message,
-      'timeStamp': timeStamp
+      'timeStamp': timeStamp,
+      'trip': trip
     };
   }
 }

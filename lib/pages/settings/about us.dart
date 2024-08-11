@@ -60,10 +60,6 @@ class _AboutUsState extends State<AboutUs> {
                 ),
               ),
             ),
-
-
-
-
             Padding(
               padding: const EdgeInsets.only(top: 20.0),
               child: GestureDetector(
